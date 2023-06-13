@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from dating.views import register_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/clients/create/',  register_user)
 ]
 
 if settings.DEBUG:
