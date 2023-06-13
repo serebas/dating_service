@@ -1,8 +1,11 @@
 from rest_framework import status
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
-from .serializers import LoverSerializer
+from .serializers import LoverSerializer, ProfileSerializer
 from .models import Lover
 from .helpers import modified_photo
 
@@ -10,7 +13,7 @@ from .helpers import modified_photo
 @api_view(['POST'])
 def register_user(request):
     #сериализуем полученные данные
-    serializer = LoverSerializer(data=request.data)
+    serializer = ProfileSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
     
         #создаем пользователя
@@ -33,5 +36,15 @@ def register_user(request):
         photo_path_with_watermark = modified_photo(lover.photo.url)
         lover.photo = photo_path_with_watermark
         lover.save()
+
         return Response({'message': 'account was created'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ClientListAPIView(generics.ListAPIView):
+    queryset = Lover.objects.all()
+    serializer_class = LoverSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ('gender', 'user__first_name', 'user__last_name')
+

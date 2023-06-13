@@ -15,14 +15,22 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from dating.views import register_user
+from dating.views import register_user, ClientListAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/clients/create/',  register_user)
+    
+    path('api/clients/create/',  register_user),
+    #http://127.0.0.1:8000/api/clients/create/
+
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
+    #http://127.0.0.1:8000/auth/token/login/
+    #http://127.0.0.1:8000/auth/token/logout/
+
+    path('api/list/', ClientListAPIView.as_view(), name='list_client'),
 ]
 
 if settings.DEBUG:

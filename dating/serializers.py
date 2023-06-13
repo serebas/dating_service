@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from django.db import models
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.contrib.auth.models import User
 from .models import Lover
 
-class LoverSerializer(serializers.Serializer):
+class ProfileSerializer(serializers.Serializer):
 
     username_validator = UnicodeUsernameValidator()
 
@@ -14,3 +15,9 @@ class LoverSerializer(serializers.Serializer):
     email = models.EmailField(blank=True)
     gender = models.CharField(max_length=1, choices=Lover.GENDER_CHOICES, verbose_name='Пол')
     photo = models.ImageField(upload_to="members/", verbose_name="Фото")
+
+
+class LoverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lover
+        fields = '__all__'
